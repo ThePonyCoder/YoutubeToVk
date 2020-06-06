@@ -65,10 +65,9 @@ class Worker:
                     f.write(self.token)
                 self.setstatus('Token was written to token.txt')
             else:
-                self.alert_err(
-                    'Still incorrect token!\nWrite your token in "token.txt"',
-                    iscritical=True)
-                exit(0)
+                self.setstatus(
+                    'Still incorrect token!\nWrite your token in "token.txt"')
+                exit(1)
         else:
             self.setstatus('[auth] Auth successful')
 
@@ -174,6 +173,12 @@ class Worker:
         data['v'] = 5.74
         link = 'https://api.vk.com/method/' + method
         return requests.post(link, data=data).json()
+
+    def get_token():
+        if not os.path.isfile('token.txt'):
+            open('token.txt', 'w').close()
+        with open('token.txt', 'r') as f:
+            return f.read().strip()
 
 
 if __name__ == '__main__':
