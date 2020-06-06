@@ -10,4 +10,4 @@ A small tool that helps you upload audio tracks from youtube.com to vk.com using
  - python3.package.requests
 
 ## Usage:
-python3 worker.py
+python3 worker.py "youtube_url"
