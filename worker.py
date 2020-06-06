@@ -4,7 +4,8 @@ import os
 import re
 import threading
 import time
-from pprint import pprint
+import sys
+# from pprint import pprint
 import webbrowser
 
 import requests
@@ -145,7 +146,7 @@ class Worker:
         self.edit_data['audio_id'] = uploaded_file_data['response']['id']
         self.setstatus('[info] Edited')
         self.do_request('audio.edit', self.edit_data)
-        pprint(self.do_request('audio.edit', self.edit_data))
+        print(self.do_request('audio.edit', self.edit_data))
         self.setstatus(
             '"' + self.edit_data['title'] + ' - ' + self.edit_data[
                 'artist'] + '" uploaded successfully')
@@ -176,9 +177,13 @@ class Worker:
 
 
 if __name__ == '__main__':
-    url = input('URL:').strip()
+    if(len(sys.argv) == 1):
+        url = input('URL:').strip()
+    else:
+        url = sys.argv[1]
 
     artist, title, text = ['', '', '']
+
     # artist = input('Artist:   (Nothing will get from author)').strip()
     # title = input('Title:    (Nothing will get from video title)').strip()
     # text = input('Lyrics:   (Nothing will get from video description)').strip()
