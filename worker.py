@@ -38,12 +38,12 @@ class Worker:
         else:
             self.setstatus('[error] Link is incorrect')
 
-    @staticmethod
-    def get_token():
-        if not os.path.isfile('token.txt'):
-            open('token.txt', 'w').close()
-        with open('token.txt', 'r') as f:
-            return f.read().strip()
+    # @staticmethod
+    # def get_token():
+        # if not os.path.isfile('token.txt'):
+            # open('token.txt', 'w').close()
+        # with open('token.txt', 'r') as f:
+            # return f.read().strip()
 
     def test_auth(self):
         testAuth = self.do_request('account.getProfileInfo')
@@ -174,7 +174,7 @@ class Worker:
         link = 'https://api.vk.com/method/' + method
         return requests.post(link, data=data).json()
 
-    def get_token():
+    def get_token(self):
         if not os.path.isfile('token.txt'):
             open('token.txt', 'w').close()
         with open('token.txt', 'r') as f:
