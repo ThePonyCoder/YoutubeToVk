@@ -2,15 +2,11 @@
 import json
 import os
 import re
-import threading
-import time
 import sys
-# from pprint import pprint
 import webbrowser
 
 import requests
 
-from collections import deque
 import subprocess as sp
 
 
@@ -38,13 +34,6 @@ class Worker:
         else:
             self.setstatus('[error] Link is incorrect')
 
-    # @staticmethod
-    # def get_token():
-        # if not os.path.isfile('token.txt'):
-            # open('token.txt', 'w').close()
-        # with open('token.txt', 'r') as f:
-            # return f.read().strip()
-
     def test_auth(self):
         testAuth = self.do_request('account.getProfileInfo')
         if 'error' in testAuth:
@@ -56,8 +45,7 @@ class Worker:
                 'or\nwrite your token in "token.txt"')
             webbrowser.open(self.get_token_url)
             self.token = input('PASTE HERE:\n')
-            self.token = re.findall('access_token=.*&expires_in', self.token)[
-                0][13:-11]
+            self.token = re.findall('access_token=.*&expires_in', self.token)[0][13:-11]
             print(self.token)
             if 'error' not in self.do_request('account.getProfileInfo'):
                 self.setstatus('Auth successful')
@@ -83,18 +71,6 @@ class Worker:
         #       '--audio-format mp3 --audio-quality 320k -f bestaudio ' \
         #       '--youtube-include-dash-manifest --write-info-json ' \
         #       '-o "load/{self.link}.%(ext)s" ' + link
-        downloading = False
-
-        def update_donwload_status():
-            while downloading:
-                try:
-                    self.setstatus(
-                        self.main_process.stdout.__next__().decode().strip())
-                    time.sleep(0.2)
-                except StopIteration:
-                    break
-
-        downloading = True
 
         self.main_process = sp.Popen([
             'youtube-dl',
@@ -107,9 +83,7 @@ class Worker:
             '-o', f'{self.path}/{self.link}.%(ext)s',
             self.link
         ], stdout=sp.PIPE, stderr=sp.PIPE)
-        threading.Thread(target=update_donwload_status).start()
         self.main_process.wait()
-        downloading = False
 
         if os.path.isfile(f'{self.path}/{self.link}.mp3'):
             self.setstatus('[info] Downloaded')
@@ -164,7 +138,8 @@ class Worker:
 
         return youtube_regex_match
 
-    def setstatus(self, line):
+    @staticmethod
+    def setstatus(line):
         print(line)
 
     # doing request to vkApi
@@ -174,7 +149,8 @@ class Worker:
         link = 'https://api.vk.com/method/' + method
         return requests.post(link, data=data).json()
 
-    def get_token(self):
+    @staticmethod
+    def get_token():
         if not os.path.isfile('token.txt'):
             open('token.txt', 'w').close()
         with open('token.txt', 'r') as f:
@@ -182,7 +158,7 @@ class Worker:
 
 
 if __name__ == '__main__':
-    if(len(sys.argv) == 1):
+    if len(sys.argv) == 1:
         url = input('URL:').strip()
     else:
         url = sys.argv[1]
